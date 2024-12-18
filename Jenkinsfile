@@ -21,7 +21,6 @@ pipeline {
                 '''
             }
         }
-    }
 
         stage('Test') {
             agent{
@@ -32,19 +31,21 @@ pipeline {
             }
                 
                 
-                steps{
-                    sh '''
-                    test -f build/index.html
-                    npm test
-                    '''
-                }
+            steps{
+                sh '''
+                test -f build/index.html
+                npm test
+                '''
             }
+        }
+    }
 
-            post {
-                always {
-                    junit 'test-results/junit.xml'
-                }
-            }
+    post {
+        always {
+            unit 'test-results/junit.xml'
+        }
+    }
+
         stage('Deploy'){
             agent{
                 docker{
@@ -52,10 +53,10 @@ pipeline {
                     reuseNode true
                 }
             }
-            stages{
+            steps{
                 sh '''
-                npm install netlify-cli -g
-                netlify --version
+                    npm install netlify-cli -g
+                    netlify --version
                 '''
             }
         }
